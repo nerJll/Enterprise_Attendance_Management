@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ner.bean.EmployeeMapper">
+
+	<!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样, 
+		然后代码里直接使用接口 -->
+	<resultMap id="BaseResultMap" type="com.ner.bean.Employee">
+		<id column="em_id" property="em_id" jdbcType="INTEGER" />
+		<result column="em_name" property="em_name" jdbcType="VARCHAR" />
+		<result column="em_sex" property="em_sex" jdbcType="VARCHAR" />
+		<result column="em_birthday" property="em_birthday" jdbcType="DATE" />
+		<result column="em_entryday" property="em_entryday" jdbcType="DATE" />
+		<result column="em_department" property="em_department"
+			jdbcType="VARCHAR" />
+		<result column="em_title" property="em_title" jdbcType="VARCHAR" />
+		<result column="em_account" property="em_account" jdbcType="VARCHAR" />
+		<result column="em_password" property="em_password" jdbcType="VARCHAR" />
+		<result column="em_classid" property="em_classid" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="addEmployee" parameterType="Employee"
+		useGeneratedKeys="true" keyProperty="em_id">
+		insert into
+		e_employee(em_id,em_name,em_sex,em_birthday,em_entryday,em_department,
+		em_classid,em_title,em_account,em_password)
+		values(#{em_id},#{em_name},#{em_sex},#{em_birthday},#{em_entryday},
+		#{em_department},#{em_classid},#{em_title},#{em_account},#{em_password})
+	</insert>
+
+	<delete id="deleteEmployee" parameterType="java.lang.Integer">
+		delete from e_employee
+		where em_id=#{em_id}
+	</delete>
+
+	<update id="updateEmployee" parameterType="Employee">
+		update e_employee set
+		em_name=#{em_name},em_sex=#{em_sex},em_birthday=#{em_birthday},
+		em_entryday=#{em_entryday},em_department=#{em_department},em_classid=#{em_classid},
+		em_title=#{em_title},em_account=#{em_account},em_password=#{em_password}
+		where
+		em_id=#{em_id}
+	</update>
+
+	<select id="selectEmployeeById" resultType="Employee"
+		parameterType="java.lang.Integer">
+		select * from
+		e_employee where
+		em_id = #{em_id}
+	</select>
+
+	<select id="selectAllEmployee" resultType="Employee">
+		select * from
+		e_employee
+	</select>
+
+	<select id="selectEmployeeByAccount" resultType="Employee">
+		SELECT * FROM
+		e_employee WHERE
+		em_account = #{em_account}
+	</select>
+
+	<sql id="Base_Column_List">
+		em_id, em_name, em_sex, em_birthday, em_entryday,
+		em_department,
+		em_title,em_account,em_password,em_classid
+	</sql>
+
+	<!-- 根据分页数据start 和size查询数据 -->
+	<select id="findByPage" parameterType="Map" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM e_employee
+		<if test="start!=null and size!=null">
+			LIMIT #{start},#{size}
+		</if>
+	</select>
+
+	<!-- 查询用户记录总数 -->
+	<select id="selectCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM
+		e_employee
+	</select>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ner.bean.AttenCancelMapper">
+
+	<insert id="addAttenCancelLog" parameterType="AttenCancel"
+		useGeneratedKeys="true" keyProperty="att_id">
+		INSERT INTO
+		e_atten_cancel_log(att_emid,att_emname,att_content,att_reason,
+		att_beginday,att_endday,att_state,att_applyday,att_cancelday)
+		VALUES(#{att_emid},#{att_emname},#{att_content},#{att_reason},
+		#{att_beginday},#{att_endday},#{att_state},#{att_applyday},#{att_cancelday})
+	</insert>
+
+	<select id="selectAttenCanByEmidDay" parameterType="AttenCancel"
+		resultType="AttenCancel">
+		SELECT * FROM
+		e_atten_cancel_log
+		WHERE
+		(att_cancelday BETWEEN
+		#{att_beginday}
+		AND
+		#{att_endday})
+		AND
+		att_emid=#{att_emid}
+	</select>
+
+</mapper>

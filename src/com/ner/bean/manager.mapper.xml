@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ner.bean.ManagerMapper">
+	<select id="findByName" resultType="Manager">
+		select * from e_manager where
+		managername = #{managerName}
+	</select>
+
+	<update id="updateManager" parameterType="Manager">
+		update e_manager set
+		managerpassword = #{managerPassword} where
+		managername = #{managerName}
+	</update>
+
+	<select id="getCount" resultType="java.lang.Integer">
+		select count(managername) from
+		e_manager
+	</select>
+
+	<select id="selectAllManagers" resultType="Manager">
+		SELECT * FROM
+		e_manager WHERE 1=1
+	</select>
+
+	<insert id="addManager" parameterType="Manager"
+		useGeneratedKeys="true" keyProperty="managerName">
+		INSERT INTO
+		e_manager(managername,managerpassword)
+		VALUES(#{managerName},#{managerPassword})
+	</insert>
+
+	<delete id="deleteManager" parameterType="java.lang.String">
+		DELETE FROM e_manager
+		WHERE managername=#{managerName}
+	</delete>
+
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ner.bean.LoginLogoutLog">
+
+	<insert id="addLoginLog" parameterType="LoginLogoutLog"
+		useGeneratedKeys="true" keyProperty="lo_id">
+		INSERT INTO
+		e_login_logout_log
+		(lo_emid,lo_emname,lo_logintime,lo_emdep,le_emclassid)
+		VALUES
+		(#{lo_emid},#{lo_emname},#{lo_logintime},
+		#{lo_emdep},#{le_emclassid})
+	</insert>
+
+	<update id="addLogoutLog" parameterType="LoginLogoutLog">
+		UPDATE
+		e_login_logout_log
+		SET
+		lo_logouttime=#{lo_logouttime}
+		WHERE
+		lo_id=#{lo_id}
+	</update>
+
+	<select id="selectLoginoutByEmidDate" parameterType="LoginLogoutLog"
+		resultType="LoginLogoutLog">
+		SELECT * FROM
+		e_login_logout_log
+		WHERE
+		(UNIX_TIMESTAMP(lo_logintime) BETWEEN
+		UNIX_TIMESTAMP(#{lo_logintime})
+		AND
+		UNIX_TIMESTAMP(#{lo_logouttime})
+		OR
+		UNIX_TIMESTAMP(lo_logouttime)
+		BETWEEN
+		UNIX_TIMESTAMP(#{lo_logintime})
+		AND
+		UNIX_TIMESTAMP(#{lo_logouttime}))
+		AND
+		lo_emid = #{lo_emid}
+	</select>
+
+</mapper>

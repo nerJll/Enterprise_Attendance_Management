@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ner.bean.AttenModify">
+
+	<insert id="addAttenModify" parameterType="AttenModify"
+		useGeneratedKeys="true" keyProperty="att_id">
+		INSERT INTO
+		e_atten_modify_log
+		(att_preid,att_emid,att_berea,att_bebeday,att_beenday,att_modday)
+		VALUES
+		(#{att_preid},#{att_emid},#{att_berea},
+		#{att_bebeday},#{att_beenday},#{att_modday})
+	</insert>
+
+	<select id="selectAttenModifyByEmidDay" parameterType="AttenModify"
+		resultType="AttenModify">
+		SELECT * FROM
+		e_atten_modify_log
+		WHERE
+		(att_modday BETWEEN
+		#{att_bebeday}
+		AND #{att_beenday})
+		AND
+		att_emid = #{att_emid}
+	</select>
+
+	<select id="selectAttenModifyByPreid" parameterType="AttenModify"
+		resultType="AttenModify">
+		SELECT * FROM
+		e_atten_modify_log
+		WHERE
+		att_preid =
+		#{att_preid}
+	</select>
+
+</mapper>

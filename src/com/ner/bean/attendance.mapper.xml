@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ner.bean.AttendanceMapper">
+
+	<!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样, 
+		然后代码里直接使用接口 -->
+	<resultMap id="BaseResultMap" type="com.ner.bean.Attendance">
+		<id column="at_id" property="at_id" jdbcType="INTEGER" />
+		<result column="at_emid" property="at_emid" jdbcType="INTEGER" />
+		<result column="at_emname" property="at_emname" jdbcType="VARCHAR" />
+		<result column="at_content" property="at_content" jdbcType="VARCHAR" />
+		<result column="at_reason" property="at_reason" jdbcType="VARCHAR" />
+		<result column="at_beginday" property="at_beginday" jdbcType="DATE" />
+		<result column="at_endday" property="at_endday" jdbcType="DATE" />
+		<result column="at_state" property="at_state" jdbcType="VARCHAR" />
+		<result column="at_applyday" property="at_applyday" jdbcType="DATE" />
+		<result column="at_emdep" property="at_emdep" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="addAttendance" parameterType="Attendance"
+		useGeneratedKeys="true" keyProperty="at_id">
+		INSERT INTO
+		e_attendance(at_emid,at_emname,at_content,at_reason,at_beginday,
+		at_endday,at_state,at_applyday,at_emdep,at_emclassid)
+		VALUES(#{at_emid},#{at_emname},#{at_content},#{at_reason},#{at_beginday},
+		#{at_endday},#{at_state},#{at_applyday},#{at_emdep},
+		#{at_emclassid})
+	</insert>
+
+	<delete id="deleteAttendance" parameterType="java.lang.Integer">
+		DELETE FROM
+		e_attendance WHERE at_id=#{at_id}
+	</delete>
+
+	<update id="updateAttendance" parameterType="Attendance">
+		UPDATE e_attendance
+		SET
+		at_emid=#{at_emid},at_content=#{at_content},at_reason=#{at_reason},
+		at_beginday=#{at_beginday},at_endday=#{at_endday},at_state=#{at_state},
+		at_applyday=#{at_applyday},at_emdep=#{at_emdep},at_emclassid=#{at_emclassid}
+		WHERE
+		at_id=#{at_id}
+	</update>
+
+	<select id="selectAllAttendance" resultType="Attendance">
+		SELECT * FROM
+		e_attendance
+	</select>
+
+	<select id="selectAttendanceById" resultType="Attendance">
+		SELECT * FROM
+		e_attendance WHERE
+		at_id = #{at_id}
+	</select>
+
+	<select id="selectAttendanceByEmid" resultType="Attendance">
+		SELECT * FROM
+		e_attendance WHERE
+		at_emid = #{at_emid}
+	</select>
+
+	<select id="selectAttendanceByClassid" resultType="Attendance">
+		SELECT * FROM
+		e_attendance WHERE
+		at_emclassid = #{at_emclassid}
+	</select>
+
+	<select id="selectAttendanceByDep" resultType="Attendance">
+		SELECT * FROM
+		e_attendance WHERE ( CURDATE() BETWEEN at_beginday AND at_endday
+		OR
+		(CURDATE()+ 1) BETWEEN at_beginday AND at_endday)
+		AND at_emdep =
+		#{at_emdep}
+		AND at_state = '通过';
+	</select>
+
+	<select id="selectClassUnRieveAttenByClassid" resultType="Attendance">
+		SELECT
+		* FROM
+		e_attendance WHERE
+		at_emclassid = #{at_emclassid}
+		AND at_state =
+		'未审核'
+		AND at_emid > 30000
+	</select>
+
+	<update id="updateUnRevReason" parameterType="Attendance">
+		UPDATE e_attendance
+		SET
+		at_state='不通过',
+		at_unrevreason=#{at_unrevreason}
+		WHERE
+		at_id=#{at_id}
+	</update>
+
+	<select id="selectAllUnRieveAtten" resultType="Attendance">
+		SELECT *
+		FROM
+		e_attendance
+		WHERE at_state ='未审核'
+	</select>
+
+	<select id="selectVacAppLogByEmid" resultType="Attendance">
+		SELECT * FROM
+		e_attendance
+		WHERE
+		(at_applyday BETWEEN #{at_beginday}
+		AND
+		#{at_endday})
+		AND
+		at_emid = #{at_emid}
+	</select>
+
+	<sql id="Base_Column_List">
+		at_id,at_emid,at_emname,at_content,at_reason,at_beginday,
+		at_endday,at_state,at_applyday,at_emdep
+	</sql>
+
+	<!-- 根据分页数据start 和size查询数据 -->
+	<select id="findByPage" parameterType="Map" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM e_attendance
+		<if test="start!=null and size!=null">
+			LIMIT #{start},#{size}
+		</if>
+	</select>
+
+	<!-- 根据分页数据start 和size查询数据 -->
+	<select id="findByPageByClassid" parameterType="Map" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM e_attendance
+		WHERE
+		at_emclassid = #{at_emclassid}
+		<if test="start!=null and size!=null">
+			LIMIT #{start},#{size}
+		</if>
+	</select>
+
+	<!-- 根据分页数据start 和size查询数据 -->
+	<select id="findByPageByEmid" parameterType="Map" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM e_attendance
+		WHERE
+		at_emid = #{at_emid}
+		<if test="start!=null and size!=null">
+			LIMIT #{start},#{size}
+		</if>
+	</select>
+
+	<!-- 查询用户记录总数 -->
+	<select id="selectCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM
+		e_attendance
+	</select>
+
+	<!-- 查询班组记录总数 -->
+	<select id="selectCountByClassid" resultType="java.lang.Integer">
+		SELECT
+		COUNT(*) FROM
+		e_attendance
+		WHERE at_emclassid=#{at_emclassid}
+	</select>
+
+	<!-- 查询个人记录总数 -->
+	<select id="selectCountByEmid" resultType="java.lang.Integer">
+		SELECT
+		COUNT(*) FROM
+		e_attendance
+		WHERE at_emid=#{at_emid}
+	</select>
+
+</mapper>
